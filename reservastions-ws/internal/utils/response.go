@@ -1,0 +1,58 @@
+package utils
+
+import (
+	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+	"runtime/debug"
+)
+
+type Response struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Body    interface{} `json:"body,omitempty"`
+}
+
+// SendErrorBody sends a structured error response with code, message, and the corresponding HTTP status
+func SendErrorBody(c *gin.Context, code int, body interface{}, err error) {
+	errorDetails, exists := ErrorMessages[code]
+	if !exists {
+		errorDetails = ErrorDetails{
+			HTTPStatus: http.StatusInternalServerError,
+			Message:    "Internal server error",
+		}
+		log.Printf("Unknown error code: %d\nError details: %v\nStack trace: %s", code, err, debug.Stack())
+	}
+
+	if err != nil {
+		log.Printf("Error %d: %s : %s", code, errorDetails.Message, err.Error())
+	} else {
+		log.Printf("Error %d: %s : (no additional error details)", code, errorDetails.Message)
+	}
+	sendResponse(c, errorDetails.HTTPStatus, code, errorDetails.Message, body)
+	c.Abort()
+}
+
+// SendError sends a structured error response without a body
+func SendError(c *gin.Context, code int, err error) {
+	SendErrorBody(c, code, nil, err)
+}
+
+// SendSuccessBody sends a successful 200 response with a body
+func SendSuccessBody(c *gin.Context, body interface{}) {
+	sendResponse(c, http.StatusOK, SUCCESS, ErrorMessages[SUCCESS].Message, body)
+}
+
+// SendSuccess sends a successful 200 response without a body
+func SendSuccess(c *gin.Context) {
+	SendSuccessBody(c, nil)
+}
+
+// Helper function to send JSON responses
+func sendResponse(c *gin.Context, httpStatus int, code int, message string, body interface{}) {
+	c.JSON(httpStatus, Response{
+		Code:    code,
+		Message: message,
+		Body:    body,
+	})
+}

@@ -1,4 +1,4 @@
-# HallReserve – Инструкция за стартиране
+# Software for Reserving Halls – Инструкция за стартиране
 
 ## 1. Описание
 

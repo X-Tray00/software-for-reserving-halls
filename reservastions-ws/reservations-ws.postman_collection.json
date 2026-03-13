@@ -1,0 +1,359 @@
+{
+  "info": {
+    "name": "Reservations WS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.body && json.body.token) {",
+                  "  pm.collectionVariables.set('accessToken', json.body.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/auth/refresh", "host": ["{{baseUrl}}"], "path": ["api", "auth", "refresh"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api", "auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Halls",
+      "item": [
+        {
+          "name": "Get All Halls",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/halls", "host": ["{{baseUrl}}"], "path": ["api", "halls"] }
+          }
+        },
+        {
+          "name": "Get Hall by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/halls/1", "host": ["{{baseUrl}}"], "path": ["api", "halls", "1"] }
+          }
+        },
+        {
+          "name": "Create Hall",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/halls", "host": ["{{baseUrl}}"], "path": ["api", "halls"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "hall",
+                  "value": "{\"name\": \"Grand Hall\", \"capacity\": 200, \"location\": \"Downtown\", \"available\": true, \"cost_per_day\": 500.00, \"category\": \"conference\", \"available_from\": \"2026-04-01T00:00:00Z\", \"available_to\": \"2026-12-31T00:00:00Z\"}",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true,
+                  "description": "Optional: attach image files"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Hall",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Cookie", "value": "access_token={{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/halls/1", "host": ["{{baseUrl}}"], "path": ["api", "halls", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grand Hall Updated\",\n  \"capacity\": 250,\n  \"location\": \"Downtown\",\n  \"available\": true,\n  \"cost_per_day\": 600.00,\n  \"category\": \"conference\",\n  \"available_from\": \"2026-04-01T00:00:00Z\",\n  \"available_to\": \"2026-12-31T00:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Hall",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/halls/1", "host": ["{{baseUrl}}"], "path": ["api", "halls", "1"] }
+          }
+        },
+        {
+          "name": "Add Hall Images",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/halls/1/images", "host": ["{{baseUrl}}"], "path": ["api", "halls", "1", "images"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "Attach one or more image files"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Hall Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/halls/images/1_photo.jpg", "host": ["{{baseUrl}}"], "path": ["api", "halls", "images", "1_photo.jpg"] }
+          }
+        },
+        {
+          "name": "Get Hall Utilization",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/halls/1/utilization", "host": ["{{baseUrl}}"], "path": ["api", "halls", "1", "utilization"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "Get All Reservations",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reservations"],
+              "query": [
+                { "key": "date", "value": "2026-06-15", "disabled": true, "description": "Filter by date (YYYY-MM-DD)" },
+                { "key": "status", "value": "active", "disabled": true, "description": "active | inProgress | done" },
+                { "key": "hall", "value": "1", "disabled": true, "description": "Filter by hall ID" },
+                { "key": "company", "value": "acme", "disabled": true, "description": "Filter by company name" },
+                { "key": "sort_by", "value": "start_date", "disabled": true, "description": "start_date | end_date | company | hall_id" },
+                { "key": "order", "value": "asc", "disabled": true, "description": "asc | desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Cookie", "value": "access_token={{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/reservations", "host": ["{{baseUrl}}"], "path": ["api", "reservations"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"hall_id\": 1,\n  \"start_date\": \"2026-05-01T09:00:00Z\",\n  \"end_date\": \"2026-05-05T18:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Reservation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Cookie", "value": "access_token={{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/reservations/1", "host": ["{{baseUrl}}"], "path": ["api", "reservations", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"hall_id\": 1,\n  \"start_date\": \"2026-05-10T09:00:00Z\",\n  \"end_date\": \"2026-05-15T18:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Reservation",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/reservations/1", "host": ["{{baseUrl}}"], "path": ["api", "reservations", "1"] }
+          }
+        },
+        {
+          "name": "Get Categorized Reservations",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/reservations/categorized", "host": ["{{baseUrl}}"], "path": ["api", "reservations", "categorized"] }
+          }
+        },
+        {
+          "name": "Get Reservation Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/reservations/summary", "host": ["{{baseUrl}}"], "path": ["api", "reservations", "summary"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Get All Users",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+                "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users"] }
+              }
+            },
+            {
+              "name": "Assign Role to User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Cookie", "value": "access_token={{accessToken}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{baseUrl}}/api/admin/users/1/roles", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", "1", "roles"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role_id\": 2\n}"
+                }
+              }
+            },
+            {
+              "name": "Revoke Role from User",
+              "request": {
+                "method": "DELETE",
+                "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+                "url": { "raw": "{{baseUrl}}/api/admin/users/1/roles/2", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", "1", "roles", "2"] }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Roles",
+          "item": [
+            {
+              "name": "Get All Roles",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{accessToken}}" }],
+                "url": { "raw": "{{baseUrl}}/api/admin/roles", "host": ["{{baseUrl}}"], "path": ["api", "admin", "roles"] }
+              }
+            },
+            {
+              "name": "Create Role",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Cookie", "value": "access_token={{accessToken}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{baseUrl}}/api/admin/roles", "host": ["{{baseUrl}}"], "path": ["api", "admin", "roles"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role_name\": \"MANAGER\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Update Role",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Cookie", "value": "access_token={{accessToken}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{baseUrl}}/api/admin/roles/1", "host": ["{{baseUrl}}"], "path": ["api", "admin", "roles", "1"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role_name\": \"SUPERVISOR\"\n}"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Version",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/version", "host": ["{{baseUrl}}"], "path": ["version"] }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    }
+  ]
+}

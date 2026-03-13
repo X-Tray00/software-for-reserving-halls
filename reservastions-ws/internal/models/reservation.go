@@ -1,0 +1,57 @@
+package models
+
+import (
+	"time"
+)
+
+// DateRange represents a suggested available period.
+type DateRange struct {
+	Start time.Time `json:"start"`
+	End   time.Time `json:"end"`
+}
+
+// Reservation represents a booking made for a hall.
+type Reservation struct {
+	ID         uint      `gorm:"primaryKey" json:"id"`
+	FirstName  string    `gorm:"not null;size:255" json:"first_name"`
+	LastName   string    `gorm:"not null;size:255" json:"last_name"`
+	Phone      string    `gorm:"size:50" json:"phone"`
+	GuestCount int       `json:"guest_count"`
+	EventType  string    `gorm:"size:100" json:"event_type"`
+	Notes      string    `gorm:"size:1000" json:"notes"`
+	StartDate  time.Time `gorm:"not null" json:"start_date"`
+	EndDate    time.Time `gorm:"not null" json:"end_date"`
+	TotalCost  float64   `gorm:"not null" json:"total_cost"`
+	HallID     uint      `gorm:"not null" json:"hall_id"`
+	Hall       Hall      `gorm:"foreignKey:HallID" json:"hall,omitempty"`
+	Status     string    `gorm:"default:active" json:"status"`
+	Maker      string    `gorm:"not null" json:"username"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+// TableName sets the table name for the Reservation model in the database.
+func (Reservation) TableName() string {
+	return "reservations"
+}
+
+// CalculateTotalCost calculates the total cost of the reservation based on the hall's cost per day.
+// If the reservation lasts longer than 7 days, a 10% discount is applied.
+func (r *Reservation) CalculateTotalCost(costPerDay float64) {
+	// Calculate the number of days.
+	days := r.EndDate.Sub(r.StartDate).Hours() / 24
+	if days < 1 {
+		days = 1
+	}
+
+	// Calculate total cost without discount.
+	total := days * costPerDay
+
+	// Apply a 10% discount for reservations longer than 7 days.
+	if days > 7 {
+		discount := total * 0.10
+		total -= discount
+	}
+
+	r.TotalCost = total
+}
