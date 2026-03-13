@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(145deg, #ddddf0 0%, #e8e4f3 50%, #dde4f0 100%);
+    min-height: 100vh;
+    margin: 0;
+    color: #1a1a2e;
+  }
+  .dark body {
+    background: linear-gradient(145deg, #0d0d1f 0%, #13132a 50%, #0f0f1f 100%);
+    color: #e2e8f0;
+  }
+  #root { min-height: 100vh; }
+}
+
+/* Login page background scroll animation */
+.login-bg-wrapper {
+  position: absolute;
+  top: 0; left: 0;
+  width: 300%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  will-change: transform;
+  transform: translateZ(0);   /* promote to GPU layer */
+}
+@keyframes login-scroll {
+  from { transform: translateX(0%) }
+  to   { transform: translateX(-66.66%) }
+}
+.login-bg-scroll {
+  animation: login-scroll 25s linear infinite;
+}
+
+@layer utilities {
+  .bg-page-gradient {
+    background: linear-gradient(145deg, #ddddf0 0%, #e8e4f3 50%, #dde4f0 100%);
+  }
+  .dark .bg-page-gradient {
+    background: linear-gradient(145deg, #0d0d1f 0%, #13132a 50%, #0f0f1f 100%);
+  }
+  .bg-header-gradient {
+    background: linear-gradient(135deg, #1a1a46 0%, #26265c 60%, #6b3f65 100%);
+  }
+  .bg-btn-gradient {
+    background: linear-gradient(135deg, #26265c, #a05d97);
+  }
+  .bg-green-gradient {
+    background: linear-gradient(135deg, #3a9e52, #2ecc71);
+  }
+  .bg-thead-gradient {
+    background: linear-gradient(135deg, #26265c, #6b3f65);
+  }
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,.2);
+  }
+}
